@@ -1,0 +1,7 @@
+--disable blankLinesAroundMark,redundantSelf,blankLinesAtStartOfScope,andOperator
+--header "Copyright (c) {year} Hejki"
+--exclude Package.swift
+--stripunusedargs closure-only
+#--patternlet hoist
+#--indent 4
+#--ranges nospace
