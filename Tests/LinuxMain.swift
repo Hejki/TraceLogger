@@ -2,7 +2,7 @@
 
 #if os(Linux)
 
-    @testable import TraceLogVaporTests
+    @testable import TraceLoggerTests
     import XCTest
 
     XCTMain([

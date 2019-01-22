@@ -27,13 +27,20 @@ public class CombineLogger: Logger, TraceLogger, Service {
         }
     }
 
-    /// @see https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html
-    public func log(format: String, parameters: [CVarArg], at level: LogLevel, file: String, function: String, line: UInt, column: UInt) {
+    public func log(format: String, parameters: [CustomStringConvertible], at level: LogLevel, file: String, function: String, line: UInt, column: UInt) {
         let timestamp = config.dateGenerator() // Capture the timestamp as early as possible to get the most accruate time.
         let appenders = config.appenders.filter { $0.isAvailable(for: level) }
 
         if !appenders.isEmpty {
-            let message = String(format: format, arguments: parameters)
+            #if os(Linux)
+                let strFormat = format.replacingOccurrences(of: "{}", with: "%s")
+                let strArgs = parameters.map { $0.description.cString }
+            #else
+                let strFormat = format.replacingOccurrences(of: "{}", with: "%@")
+                let strArgs = parameters.map { $0.description }
+            #endif
+
+            let message = String(format: strFormat, arguments: strArgs)
 
             writeLog(
                 LogContext(date: timestamp, level: level, file: file,

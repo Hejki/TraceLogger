@@ -47,7 +47,7 @@ final class CombineLoggerTests: XCTestCase {
 
         let logger = CombineLogger(cfg)
 
-        logger.info("Hello %@", "world")
+        logger.info("Hello {}", "world")
 
         XCTAssertEqual(appender.buffer.count, 1)
         XCTAssertEqual(appender.buffer[0].message, "Hello world")

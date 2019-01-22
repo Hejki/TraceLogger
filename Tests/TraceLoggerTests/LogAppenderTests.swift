@@ -1,13 +1,11 @@
 // Copyright (c) 2019 Hejki
 
 import Logging
-// import Service
 @testable import TraceLogger
-// Copyright (c) 2019 Hejki
 import XCTest
-// import class Foundation.Bundle
 
 final class LogAppenderTests: XCTestCase {
+    private let logDate = Date(timeIntervalSince1970: 12343.123)
 
     func testParser() throws {
         let writer = WriterMock()
@@ -21,7 +19,7 @@ final class LogAppenderTests: XCTestCase {
 
         XCTAssertEqual(appender.pattern, "%date{HH:mm:ss.SSS} %level %file.%fext[%line:%column] - %msg%n")
         XCTAssertEqual(writer.buffer.count, 1)
-        XCTAssertEqual(writer.buffer[0], "04:25:43.123 ERROR LogAppenderTests.swift[18:24] - This is error\n")
+        XCTAssertEqual(writer.buffer[0], "\(date(format: "HH:mm:ss.SSS")) ERROR LogAppenderTests.swift[18:24] - This is error\n")
     }
 
     func testLogLevel() throws {
@@ -111,7 +109,7 @@ final class LogAppenderTests: XCTestCase {
         appender.writeLog(logContext(level: .info, msg: ""))
 
         XCTAssertEqual(appender.pattern, "%date{yyyy-MM-dd'T'HH:mm:ss.SSS Z}")
-        XCTAssertEqual(writer.buffer, ["1970-01-01T04:25:43.123 +0100"])
+        XCTAssertEqual(writer.buffer, [date(format: "yyyy-MM-dd'T'HH:mm:ss.SSS Z")])
     }
 
     func testParseDateWithoutFormat() throws {
@@ -121,12 +119,12 @@ final class LogAppenderTests: XCTestCase {
         appender.writeLog(logContext(level: .info, msg: ""))
 
         XCTAssertEqual(appender.pattern, "%date{yyyy-MM-dd HH:mm:ss.SSS}")
-        XCTAssertEqual(writer.buffer, ["1970-01-01 04:25:43.123"])
+        XCTAssertEqual(writer.buffer, [date(format: "yyyy-MM-dd HH:mm:ss.SSS")])
     }
 
     private func logContext(level: LogLevel, msg: String) -> LogContext {
         return LogContext(
-            date: Date(timeIntervalSince1970: 12343.123),
+            date: logDate,
             level: level,
             file: #file,
             function: #function,
@@ -134,6 +132,13 @@ final class LogAppenderTests: XCTestCase {
             column: 24,
             message: msg
         )
+    }
+
+    private func date(format: String) -> String {
+        let formatter = DateFormatter()
+
+        formatter.dateFormat = format
+        return formatter.string(from: logDate)
     }
 
     private class WriterMock: LogWriter {
