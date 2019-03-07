@@ -66,7 +66,7 @@ public extension TraceLogger {
     }
 
     /// Error, indicates something went wrong and a part of the execution was failed.
-    public func error(t_ format: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column, _ parameters: CustomStringConvertible...) {
+    public func error(_ format: String, file: String = #file, function: String = #function, line: UInt = #line, column: UInt = #column, _ parameters: CustomStringConvertible...) {
         self.log(format: format, parameters: parameters, at: .error, file: file, function: function, line: line, column: column)
     }
 
